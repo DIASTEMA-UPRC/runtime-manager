@@ -1,0 +1,8 @@
+use UIDB
+db.dropDatabase()
+use UIDB
+db.podstates.insert( {"job-id" : "111", "state" : "Down"} )
+db.podstates.insert( {"job-id" : "222", "state" : "Down"} )
+db.podstates.insert( {"job-id" : "333", "state" : "Down"} )
+cls
+db.podstates.find()
