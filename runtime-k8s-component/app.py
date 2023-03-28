@@ -9,6 +9,16 @@ import random
 HOST = os.getenv("HOST", "localhost")
 PORT = int(os.getenv("PORT", 5002))
 
+# MinIO Data
+MINIO_HOST = os.getenv("MINIO_HOST", "localhost")
+MINIO_PORT = int(os.getenv("MINIO_PORT", 9000))
+MINIO_USER = os.getenv("MINIO_USER", "diastema")
+MINIO_PASS = os.getenv("MINIO_PASS", "localhost")
+
+# Mongo Data
+MONGO_HOST = os.getenv("MINIO_HOST", "localhost")
+MONGO_PORT = int(os.getenv("MINIO_PORT", 27017))
+
 EXECUTOR_HOST = os.getenv("EXECUTOR_HOST", "localhost")
 
 DUMMY = os.getenv("DUMMY", "TRUE")
@@ -31,18 +41,16 @@ def run(port):
         return response
     
     # Run the job on Terminal
-    # TODO: Run the job on Terminal
-    cmd = "THIS "
-    cmd += "IS "
-    cmd += "GOING "
-    cmd += "TO "
-    cmd += "BE "
-    cmd += "THE "
-    cmd += "COMMAND "
-    cmd += "TO "
-    cmd += "RUN "
-    cmd += "THE "
-    cmd += "JOB!"
+    cmd = 'spark-submit '
+    cmd += '--conf spark.executorEnv.FLASK_HOST="'+EXECUTOR_HOST+'" '
+    cmd += '--conf spark.executorEnv.FLASK_PORT="'+str(port)+'" '
+    cmd += '--conf spark.executorEnv.MINIO_HOST="'+MINIO_HOST+'" '
+    cmd += '--conf spark.executorEnv.MINIO_PORT="'+str(MINIO_PORT)+'" '
+    cmd += '--conf spark.executorEnv.MINIO_USER="'+MINIO_USER+'" '
+    cmd += '--conf spark.executorEnv.MINIO_PASS="'+MINIO_PASS+'" '
+    cmd += '--conf spark.executorEnv.MONGO_HOST="'+MONGO_HOST+'" '
+    cmd += '--conf spark.executorEnv.MONGO_PORT="'+str(MONGO_PORT)+'" '
+    cmd += 'src/main.py'
     print("[COMMAND]", cmd)
     os.system(cmd)
 
