@@ -46,9 +46,6 @@ def run(port):
     
     # Run the job on Terminal
     cmd = 'spark-submit '
-    cmd += '--master k8s://https://'+KUBERNETES_HOST+':'+KUBERNETES_PORT+' '
-    cmd += '--deploy-mode cluster '
-    cmd += '--name analysis-model '
     cmd += '--conf spark.executorEnv.FLASK_HOST="'+EXECUTOR_HOST+'" '
     cmd += '--conf spark.executorEnv.FLASK_PORT="'+str(port)+'" '
     cmd += '--conf spark.executorEnv.MINIO_HOST="'+MINIO_HOST+'" '
@@ -57,9 +54,6 @@ def run(port):
     cmd += '--conf spark.executorEnv.MINIO_PASS="'+MINIO_PASS+'" '
     cmd += '--conf spark.executorEnv.MONGO_HOST="'+MONGO_HOST+'" '
     cmd += '--conf spark.executorEnv.MONGO_PORT="'+str(MONGO_PORT)+'" '
-    cmd += '--conf spark.app.name=analysis-model '
-    cmd += '--conf spark.kubernetes.authenticate.driver.serviceAccountName=spark '
-    cmd += '--conf spark.kubernetes.container.image=docker.io/konvoulgaris/diastema-daas-analytics-catalogue-executor:latest '
     cmd += 'src/main.py'
     print("[COMMAND]", cmd)
     os.system(cmd)
