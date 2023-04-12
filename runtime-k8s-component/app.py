@@ -54,7 +54,7 @@ def run(port):
     cmd += '--conf spark.executorEnv.MINIO_PASS="'+MINIO_PASS+'" '
     cmd += '--conf spark.executorEnv.MONGO_HOST="'+MONGO_HOST+'" '
     cmd += '--conf spark.executorEnv.MONGO_PORT="'+str(MONGO_PORT)+'" '
-    cmd += 'src/main.py'
+    cmd += 'src/main.py &'
     print("[COMMAND]", cmd)
     os.system(cmd)
 
