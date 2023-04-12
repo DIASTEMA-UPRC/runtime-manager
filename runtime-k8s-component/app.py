@@ -16,8 +16,8 @@ MINIO_USER = os.getenv("MINIO_USER", "diastema")
 MINIO_PASS = os.getenv("MINIO_PASS", "localhost")
 
 # Mongo Data
-MONGO_HOST = os.getenv("MINIO_HOST", "localhost")
-MONGO_PORT = int(os.getenv("MINIO_PORT", 27017))
+MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
+MONGO_PORT = int(os.getenv("MONGO_PORT", 27017))
 
 # Kubernetes Data
 KUBERNETES_HOST = os.getenv("KUBERNETES_HOST", "192.168.49.2")
