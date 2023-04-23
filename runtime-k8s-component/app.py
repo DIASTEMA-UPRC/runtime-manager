@@ -1,8 +1,12 @@
+# Import custom Libraries
+from command_handler import exec_command as command_thread
+
 # Import Libraries
 import os
 from flask import Flask, request, Response, make_response
 import requests
 import random
+import threading
 
 """ Environment Variables """
 # Flask app Host and Port
@@ -54,9 +58,10 @@ def run(port):
     cmd += '--conf spark.executorEnv.MINIO_PASS="'+MINIO_PASS+'" '
     cmd += '--conf spark.executorEnv.MONGO_HOST="'+MONGO_HOST+'" '
     cmd += '--conf spark.executorEnv.MONGO_PORT="'+str(MONGO_PORT)+'" '
-    cmd += 'src/main.py &'
-    print("[COMMAND]", cmd)
-    os.system(cmd)
+    cmd += '/home/ubuntu/daas-analytics-catalogue-executor/src/main.py'
+
+    thread = threading.Thread(target = command_thread, args = (cmd, ))
+    thread.start()
 
     return 
 
