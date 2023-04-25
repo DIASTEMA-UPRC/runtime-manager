@@ -113,6 +113,7 @@ def kill(port):
     
     # Kill the job
     url = "http://"+EXECUTOR_HOST+":"+str(port)+"/kill"
+    requests.get(url)
     return
 
 # POST /predict/<port>
