@@ -10,26 +10,26 @@ import threading
 
 """ Environment Variables """
 # Flask app Host and Port
-HOST = os.getenv("HOST", "localhost")
-PORT = int(os.getenv("PORT", 5002))
+HOST = os.getenv("HOST", "0.0.0.0")
+PORT = int(os.getenv("PORT", 11112))
 
 # MinIO Data
-MINIO_HOST = os.getenv("MINIO_HOST", "localhost")
+MINIO_HOST = os.getenv("MINIO_HOST", "10.20.20.191")
 MINIO_PORT = int(os.getenv("MINIO_PORT", 9000))
 MINIO_USER = os.getenv("MINIO_USER", "diastema")
-MINIO_PASS = os.getenv("MINIO_PASS", "localhost")
+MINIO_PASS = os.getenv("MINIO_PASS", "diastema")
 
 # Mongo Data
-MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
+MONGO_HOST = os.getenv("MONGO_HOST", "10.20.20.205")
 MONGO_PORT = int(os.getenv("MONGO_PORT", 27017))
 
 # Kubernetes Data
-KUBERNETES_HOST = os.getenv("KUBERNETES_HOST", "192.168.49.2")
-KUBERNETES_PORT = int(os.getenv("KUBERNETES_PORT", "8443"))
+# KUBERNETES_HOST = os.getenv("KUBERNETES_HOST", "192.168.49.2")
+# KUBERNETES_PORT = int(os.getenv("KUBERNETES_PORT", "8443"))
 
-EXECUTOR_HOST = os.getenv("EXECUTOR_HOST", "localhost")
+EXECUTOR_HOST = os.getenv("EXECUTOR_HOST", "0.0.0.0")
 
-DUMMY = os.getenv("DUMMY", "TRUE")
+DUMMY = os.getenv("DUMMY", "FALSE")
 
 """ Global variables """
 # The name of the flask app
@@ -47,7 +47,7 @@ def run(port):
         response.status_code = 200
         # Return the response
         return response
-    
+
     # Run the job on Terminal
     cmd = 'spark-submit '
     cmd += '--conf spark.executorEnv.FLASK_HOST="'+EXECUTOR_HOST+'" '
@@ -63,7 +63,7 @@ def run(port):
     thread = threading.Thread(target = command_thread, args = (cmd, ))
     thread.start()
 
-    return 
+    return Response(status=200)
 
 # GET /check/<port>
 @app.route("/check/<port>", methods=["GET"])
@@ -75,12 +75,14 @@ def check(port):
             return Response(status=200)
         else:
             return Response(status=201)
-        
+
     # Check if the job is running
     url = "http://"+EXECUTOR_HOST+":"+str(port)+"/health"
     response = requests.get(url)
+    print("THIS IS THE URL: " + url)
+    print("THIS IS THE RESPONSE: " + str(response.status_code))
 
-    return response
+    return Response(status = response.status_code)
 
 # GET /load/<job_id>/<port>
 @app.route("/load/<job_id>/<port>", methods=["GET"])
@@ -93,11 +95,13 @@ def load(job_id, port):
         response.status_code = 200
         # Return the response
         return response
-    
+
     # Load the job's model
-    url = "http://"+EXECUTOR_HOST+":"+str(port)+"/load/"+str(job_id)
+    url = "http://"+EXECUTOR_HOST+":"+str(port)+"/start/"+str(job_id)
     response = requests.get(url)
-    return
+    print(response.content)
+
+    return Response(status=200)
 
 # GET /kill/<port>
 @app.route("/kill/<port>", methods=["GET"])
@@ -110,11 +114,11 @@ def kill(port):
         response.status_code = 200
         # Return the response
         return response
-    
+
     # Kill the job
     url = "http://"+EXECUTOR_HOST+":"+str(port)+"/kill"
     requests.get(url)
-    return
+    return Response(status=200)
 
 # POST /predict/<port>
 @app.route("/predict/<port>", methods=["POST"])
@@ -127,20 +131,20 @@ def predict(port):
         response.status_code = 200
         # Return the response
         return response
-    
+
     # Get the request body
     data = request.data
 
     # Get the request headers
     headers = request.headers
-    
+
     # Predict the job
     url = "http://"+EXECUTOR_HOST+":"+str(port)+"/predict"
 
     # Send the request
     response = requests.post(url, data=data, headers=headers)
-    
-    return response
+
+    return Response(response.content, status=response.status_code)
 
 """ Main """
 # Main code
